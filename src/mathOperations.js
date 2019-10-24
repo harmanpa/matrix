@@ -28,6 +28,12 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   };
 
   AbstractMatrix.add = function add(matrix, value) {
+    if (typeof(matrix)==='number') {
+      if (typeof(value)==='number') {
+        return matrix + value;
+      }
+      return Matrix.addS(value, matrix);
+    }
     const newMatrix = new Matrix(matrix);
     return newMatrix.add(value);
   };
@@ -61,6 +67,12 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   };
 
   AbstractMatrix.sub = function sub(matrix, value) {
+    if (typeof(matrix)==='number') {
+      if (typeof(value)==='number') {
+        return matrix - value;
+      }
+      return Matrix.mulS(Matrix.add(value, -matrix), -1);
+    }
     const newMatrix = new Matrix(matrix);
     return newMatrix.sub(value);
   };
@@ -98,6 +110,12 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   };
 
   AbstractMatrix.mul = function mul(matrix, value) {
+    if (typeof(matrix)==='number') {
+      if (typeof(value)==='number') {
+        return matrix * value;
+      }
+      return Matrix.mulS(value, matrix);
+    }
     const newMatrix = new Matrix(matrix);
     return newMatrix.mul(value);
   };
@@ -381,6 +399,22 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.zeroFillRightShiftS = AbstractMatrix.prototype.rightShiftS;
   AbstractMatrix.prototype.zeroFillRightShiftM = AbstractMatrix.prototype.rightShiftM;
   AbstractMatrix.zeroFillRightShift = AbstractMatrix.rightShift;
+
+  AbstractMatrix.mmul = function(value1, value2) {
+    if(typeof(value1)==='number') {
+      if(typeof(value2)==='number') {
+        return value1 * value2;
+      } else {
+        return new Matrix(value2).mulS(value1);
+      }
+    } else {
+      if(typeof(value2)==='number') {
+        return new Matrix(value1).mulS(value2);
+      } else {
+        return new Matrix(value1).mmul(new Matrix(value2));
+      }
+    }
+  };
 
   AbstractMatrix.prototype.not = function not() {
     for (let i = 0; i < this.rows; i++) {

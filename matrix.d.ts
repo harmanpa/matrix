@@ -790,25 +790,26 @@ export abstract class AbstractMatrix {
   rightShift(value: ScalarOrMatrix): this;
   zeroFillRightShift(value: ScalarOrMatrix): this;
   // new matrix
-  static add(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static sub(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static subtract(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static mul(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static multiply(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static div(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static divide(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static mod(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static modulus(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static and(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static or(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static xor(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static leftShift(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
+  static add(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static sub(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static subtract(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static mul(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static multiply(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static mmul(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static div(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static divide(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static mod(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static modulus(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static and(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static or(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static xor(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static leftShift(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
   static signPropagatingRightShift(
-    matrix: MaybeMatrix,
+    matrix: ScalarOrMatrix,
     value: ScalarOrMatrix,
   ): Matrix;
-  static rightShift(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
-  static zeroFillRightShift(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
+  static rightShift(matrix: ScalarOrMatrix, value: ScalarOrMatrix): Matrix;
+  static zeroFillRightShift(matrix: ScalarOrMatrix, value: ScalarOrMatrix): Matrix;
 
   // Functional operators (one arg)
   // inplace
@@ -875,8 +876,12 @@ export abstract class AbstractMatrix {
   // Functional operators with one arg
   // inplace
   pow(value: ScalarOrMatrix): this;
+  atan2(value: ScalarOrMatrix): this;
+  hypot(value: ScalarOrMatrix): this;
   // new matrix
   static pow(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static atan2(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
+  static hypot(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
 }
 
 export class Matrix extends AbstractMatrix {
