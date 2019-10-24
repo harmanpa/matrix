@@ -1,7 +1,7 @@
-type MaybeMatrix = AbstractMatrix | number[][];
-type ScalarOrMatrix = number | MaybeMatrix;
-type NumberOrMatrix = number | AbstractMatrix;
-type MatrixDimension = 'row' | 'column';
+export type MaybeMatrix = AbstractMatrix | number[][];
+export type ScalarOrMatrix = number | MaybeMatrix;
+export type NumberOrMatrix = number | AbstractMatrix;
+export type MatrixDimension = 'row' | 'column';
 
 export interface IRandomOptions {
   /**
