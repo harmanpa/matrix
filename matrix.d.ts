@@ -1,5 +1,6 @@
 type MaybeMatrix = AbstractMatrix | number[][];
 type ScalarOrMatrix = number | MaybeMatrix;
+type NumberOrMatrix = number | AbstractMatrix;
 type MatrixDimension = 'row' | 'column';
 
 export interface IRandomOptions {
@@ -841,41 +842,41 @@ export abstract class AbstractMatrix {
   tanh(): this;
   trunc(): this;
   // new matrix
-  static not(value: MaybeMatrix): Matrix;
-  static abs(value: MaybeMatrix): Matrix;
-  static acos(value: MaybeMatrix): Matrix;
-  static acosh(value: MaybeMatrix): Matrix;
-  static asin(value: MaybeMatrix): Matrix;
-  static asinh(value: MaybeMatrix): Matrix;
-  static atan(value: MaybeMatrix): Matrix;
-  static atanh(value: MaybeMatrix): Matrix;
-  static cbrt(value: MaybeMatrix): Matrix;
-  static ceil(value: MaybeMatrix): Matrix;
-  static clz32(value: MaybeMatrix): Matrix;
-  static cos(value: MaybeMatrix): Matrix;
-  static cosh(value: MaybeMatrix): Matrix;
-  static exp(value: MaybeMatrix): Matrix;
-  static expm1(value: MaybeMatrix): Matrix;
-  static floor(value: MaybeMatrix): Matrix;
-  static fround(value: MaybeMatrix): Matrix;
-  static log(value: MaybeMatrix): Matrix;
-  static log1p(value: MaybeMatrix): Matrix;
-  static log10(value: MaybeMatrix): Matrix;
-  static log2(value: MaybeMatrix): Matrix;
-  static round(value: MaybeMatrix): Matrix;
-  static sign(value: MaybeMatrix): Matrix;
-  static sin(value: MaybeMatrix): Matrix;
-  static sinh(value: MaybeMatrix): Matrix;
-  static sqrt(value: MaybeMatrix): Matrix;
-  static tan(value: MaybeMatrix): Matrix;
-  static tanh(value: MaybeMatrix): Matrix;
-  static trunc(value: MaybeMatrix): Matrix;
+  static not(value: ScalarOrMatrix): NumberOrMatrix;
+  static abs(value: ScalarOrMatrix): NumberOrMatrix;
+  static acos(value: ScalarOrMatrix): NumberOrMatrix;
+  static acosh(value: ScalarOrMatrix): NumberOrMatrix;
+  static asin(value: ScalarOrMatrix): NumberOrMatrix;
+  static asinh(value: ScalarOrMatrix): NumberOrMatrix;
+  static atan(value: ScalarOrMatrix): NumberOrMatrix;
+  static atanh(value: ScalarOrMatrix): NumberOrMatrix;
+  static cbrt(value: ScalarOrMatrix): NumberOrMatrix;
+  static ceil(value: ScalarOrMatrix): NumberOrMatrix;
+  static clz32(value: ScalarOrMatrix): NumberOrMatrix;
+  static cos(value: ScalarOrMatrix): NumberOrMatrix;
+  static cosh(value: ScalarOrMatrix): NumberOrMatrix;
+  static exp(value: ScalarOrMatrix): NumberOrMatrix;
+  static expm1(value: ScalarOrMatrix): NumberOrMatrix;
+  static floor(value: ScalarOrMatrix): NumberOrMatrix;
+  static fround(value: ScalarOrMatrix): NumberOrMatrix;
+  static log(value: ScalarOrMatrix): NumberOrMatrix;
+  static log1p(value: ScalarOrMatrix): NumberOrMatrix;
+  static log10(value: ScalarOrMatrix): NumberOrMatrix;
+  static log2(value: ScalarOrMatrix): NumberOrMatrix;
+  static round(value: ScalarOrMatrix): NumberOrMatrix;
+  static sign(value: ScalarOrMatrix): NumberOrMatrix;
+  static sin(value: ScalarOrMatrix): NumberOrMatrix;
+  static sinh(value: ScalarOrMatrix): NumberOrMatrix;
+  static sqrt(value: ScalarOrMatrix): NumberOrMatrix;
+  static tan(value: ScalarOrMatrix): NumberOrMatrix;
+  static tanh(value: ScalarOrMatrix): NumberOrMatrix;
+  static trunc(value: ScalarOrMatrix): NumberOrMatrix;
 
   // Functional operators with one arg
   // inplace
   pow(value: ScalarOrMatrix): this;
   // new matrix
-  static pow(matrix: MaybeMatrix, value: ScalarOrMatrix): Matrix;
+  static pow(matrix: ScalarOrMatrix, value: ScalarOrMatrix): NumberOrMatrix;
 }
 
 export class Matrix extends AbstractMatrix {

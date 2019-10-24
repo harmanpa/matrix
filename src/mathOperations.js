@@ -16,7 +16,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.addM = function addM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -49,7 +49,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.subM = function subM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -86,7 +86,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.mulM = function mulM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -123,7 +123,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.divM = function divM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -160,7 +160,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.modM = function modM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -197,7 +197,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.andM = function andM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -230,7 +230,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.orM = function orM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -263,7 +263,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.xorM = function xorM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -296,7 +296,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.leftShiftM = function leftShiftM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -329,7 +329,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.signPropagatingRightShiftM = function signPropagatingRightShiftM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -362,7 +362,7 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   AbstractMatrix.prototype.rightShiftM = function rightShiftM(matrix) {
     matrix = Matrix.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
+        this.columns !== matrix.columns) {
       throw new RangeError('Matrices dimensions must be equal');
     }
     for (let i = 0; i < this.rows; i++) {
@@ -391,433 +391,71 @@ export function installMathOperations(AbstractMatrix, Matrix) {
     return this;
   };
 
-  AbstractMatrix.not = function not(matrix) {
-    const newMatrix = new Matrix(matrix);
+  AbstractMatrix.not = function not(value) {
+    if (typeof value === 'number') return ~value;
+    const newMatrix = new Matrix(value);
     return newMatrix.not();
   };
 
-  AbstractMatrix.prototype.abs = function abs() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.abs(this.get(i, j)));
-      }
-    }
-    return this;
-  };
+  Object.getOwnPropertyNames(Math)
+      .filter((name) => typeof(Math[name])==='function')
+      .filter((name) => ['min', 'max'].indexOf(name)===-1)
+      .forEach((name) => {
+        switch(Math[name].length) {
+          case 1:
+            AbstractMatrix.prototype[name] = function() {
+              for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.columns; j++) {
+                  this.set(i, j, Math[name](this.get(i, j)));
+                }
+              }
+              return this;
+            };
+            AbstractMatrix[name] = function(value) {
+              if (typeof value === 'number') return Math[name](value);
+              const newMatrix = new Matrix(value);
+              return newMatrix[name]();
+            };
+            break;
+          case 2:
+            AbstractMatrix.prototype[name] = function(value2) {
+              if (typeof value2 === 'number') {
+                for (let i = 0; i < this.rows; i++) {
+                  for (let j = 0; j < this.columns; j++) {
+                    this.set(i, j, Math[name](this.get(i, j), value2));
+                  }
+                }
+              } else {
+                const newMatrix2 = new Matrix(value2);
+                for (let i = 0; i < this.rows; i++) {
+                  for (let j = 0; j < this.columns; j++) {
+                    this.set(i, j, Math[name](this.get(i, j), newMatrix2.get(i, j)));
+                  }
+                }
+              }
+              return this;
+            };
+            AbstractMatrix[name] = function(value1, value2) {
+              if (typeof value1 === 'number') {
+                if (typeof value2 === 'number') {
+                  return Math[name](value1, value2);
+                } else {
+                  const newMatrix2 = new Matrix(value2);
+                  for (let i = 0; i < newMatrix2.rows; i++) {
+                    for (let j = 0; j < newMatrix2.columns; j++) {
+                      newMatrix2.set(i, j, Math[name](value1, newMatrix2.get(i, j)));
+                    }
+                  }
+                  return newMatrix2;
+                }
+              } else {
+                const newMatrix1 = new Matrix(value1);
+                return newMatrix1[name](value2);
+              }
+            };
+            break;
+          default:
+        }
+      });
 
-  AbstractMatrix.abs = function abs(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.abs();
-  };
-
-  AbstractMatrix.prototype.acos = function acos() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.acos(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.acos = function acos(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.acos();
-  };
-
-  AbstractMatrix.prototype.acosh = function acosh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.acosh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.acosh = function acosh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.acosh();
-  };
-
-  AbstractMatrix.prototype.asin = function asin() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.asin(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.asin = function asin(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.asin();
-  };
-
-  AbstractMatrix.prototype.asinh = function asinh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.asinh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.asinh = function asinh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.asinh();
-  };
-
-  AbstractMatrix.prototype.atan = function atan() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.atan(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.atan = function atan(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.atan();
-  };
-
-  AbstractMatrix.prototype.atanh = function atanh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.atanh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.atanh = function atanh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.atanh();
-  };
-
-  AbstractMatrix.prototype.cbrt = function cbrt() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.cbrt(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.cbrt = function cbrt(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.cbrt();
-  };
-
-  AbstractMatrix.prototype.ceil = function ceil() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.ceil(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.ceil = function ceil(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.ceil();
-  };
-
-  AbstractMatrix.prototype.clz32 = function clz32() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.clz32(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.clz32 = function clz32(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.clz32();
-  };
-
-  AbstractMatrix.prototype.cos = function cos() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.cos(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.cos = function cos(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.cos();
-  };
-
-  AbstractMatrix.prototype.cosh = function cosh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.cosh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.cosh = function cosh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.cosh();
-  };
-
-  AbstractMatrix.prototype.exp = function exp() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.exp(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.exp = function exp(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.exp();
-  };
-
-  AbstractMatrix.prototype.expm1 = function expm1() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.expm1(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.expm1 = function expm1(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.expm1();
-  };
-
-  AbstractMatrix.prototype.floor = function floor() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.floor(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.floor = function floor(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.floor();
-  };
-
-  AbstractMatrix.prototype.fround = function fround() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.fround(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.fround = function fround(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.fround();
-  };
-
-  AbstractMatrix.prototype.log = function log() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.log(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.log = function log(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.log();
-  };
-
-  AbstractMatrix.prototype.log1p = function log1p() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.log1p(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.log1p = function log1p(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.log1p();
-  };
-
-  AbstractMatrix.prototype.log10 = function log10() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.log10(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.log10 = function log10(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.log10();
-  };
-
-  AbstractMatrix.prototype.log2 = function log2() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.log2(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.log2 = function log2(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.log2();
-  };
-
-  AbstractMatrix.prototype.round = function round() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.round(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.round = function round(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.round();
-  };
-
-  AbstractMatrix.prototype.sign = function sign() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.sign(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.sign = function sign(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.sign();
-  };
-
-  AbstractMatrix.prototype.sin = function sin() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.sin(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.sin = function sin(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.sin();
-  };
-
-  AbstractMatrix.prototype.sinh = function sinh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.sinh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.sinh = function sinh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.sinh();
-  };
-
-  AbstractMatrix.prototype.sqrt = function sqrt() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.sqrt(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.sqrt = function sqrt(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.sqrt();
-  };
-
-  AbstractMatrix.prototype.tan = function tan() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.tan(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.tan = function tan(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.tan();
-  };
-
-  AbstractMatrix.prototype.tanh = function tanh() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.tanh(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.tanh = function tanh(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.tanh();
-  };
-
-  AbstractMatrix.prototype.trunc = function trunc() {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.trunc(this.get(i, j)));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.trunc = function trunc(matrix) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.trunc();
-  };
-
-  AbstractMatrix.pow = function pow(matrix, arg0) {
-    const newMatrix = new Matrix(matrix);
-    return newMatrix.pow(arg0);
-  };
-
-  AbstractMatrix.prototype.pow = function pow(value) {
-    if (typeof value === 'number') return this.powS(value);
-    return this.powM(value);
-  };
-
-  AbstractMatrix.prototype.powS = function powS(value) {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.pow(this.get(i, j), value));
-      }
-    }
-    return this;
-  };
-
-  AbstractMatrix.prototype.powM = function powM(matrix) {
-    matrix = Matrix.checkMatrix(matrix);
-    if (this.rows !== matrix.rows ||
-      this.columns !== matrix.columns) {
-      throw new RangeError('Matrices dimensions must be equal');
-    }
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.set(i, j, Math.pow(this.get(i, j), matrix.get(i, j)));
-      }
-    }
-    return this;
-  };
-}
+ }
