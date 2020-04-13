@@ -153,6 +153,12 @@ export function installMathOperations(AbstractMatrix, Matrix) {
   };
 
   AbstractMatrix.div = function div(matrix, value) {
+    if (typeof(matrix)==='number') {
+      if (typeof(value)==='number') {
+        return matrix / value;
+      }
+      return new Matrix([matrix]).div(value);
+    }
     const newMatrix = new Matrix(matrix);
     return newMatrix.div(value);
   };
